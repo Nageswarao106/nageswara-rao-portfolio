@@ -28,6 +28,7 @@ export default function HomePage() {
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false)
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
   const lenisRef = useRef<Lenis | null>(null)
+  const savedScrollPosition = useRef<number>(0)
   const { scrollYProgress } = useScroll()
   const layerGradY = useTransform(scrollYProgress, [0, 1], [0, 40])
   const layerGridY = useTransform(scrollYProgress, [0, 1], [0, 60])
@@ -126,12 +127,12 @@ export default function HomePage() {
   useEffect(() => {
     if (isProjectModalOpen) {
       // Store the current scroll position
-      const scrollY = window.scrollY
+      savedScrollPosition.current = window.scrollY
       
       // Prevent scrolling
       document.body.style.overflow = 'hidden'
       document.body.style.position = 'fixed'
-      document.body.style.top = `-${scrollY}px`
+      document.body.style.top = `-${savedScrollPosition.current}px`
       document.body.style.width = '100%'
       
       // Prevent wheel events on the body
@@ -149,12 +150,19 @@ export default function HomePage() {
         document.body.style.top = ''
         document.body.style.width = ''
         
-        // Restore scroll position
-        window.scrollTo(0, scrollY)
-        
-        // Remove event listeners
+        // Remove event listeners first
         document.removeEventListener('wheel', preventScroll)
         document.removeEventListener('touchmove', preventScroll)
+        
+        // Restore scroll position with a slight delay to ensure DOM is ready
+        setTimeout(() => {
+          // Use Lenis if available, otherwise use regular scrollTo
+          if (lenisRef.current) {
+            lenisRef.current.scrollTo(savedScrollPosition.current, { duration: 0.3 })
+          } else {
+            window.scrollTo(0, savedScrollPosition.current)
+          }
+        }, 50)
       }
     }
   }, [isProjectModalOpen])
