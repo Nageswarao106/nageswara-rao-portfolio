@@ -20,23 +20,26 @@ export default function ProjectDetailModal({ project, isOpen, onClose }: Project
       // Focus the modal for keyboard navigation
       modalRef.current.focus()
       
-      // Handle mouse wheel events
+      // Handle mouse wheel events only within the modal
       const handleWheel = (e: WheelEvent) => {
         const modal = modalRef.current
-        if (modal) {
+        if (modal && modal.contains(e.target as Node)) {
           const scrollableContent = modal.querySelector('.overflow-y-auto') as HTMLElement
           if (scrollableContent) {
             e.preventDefault()
+            e.stopPropagation()
             scrollableContent.scrollTop += e.deltaY
           }
         }
       }
 
-      // Add wheel event listener
-      document.addEventListener('wheel', handleWheel, { passive: false })
+      // Add wheel event listener to the modal only
+      modalRef.current.addEventListener('wheel', handleWheel, { passive: false })
       
       return () => {
-        document.removeEventListener('wheel', handleWheel)
+        if (modalRef.current) {
+          modalRef.current.removeEventListener('wheel', handleWheel)
+        }
       }
     }
   }, [isOpen])

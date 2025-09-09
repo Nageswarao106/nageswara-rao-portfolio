@@ -125,13 +125,37 @@ export default function HomePage() {
   // Prevent body scroll when modal is open
   useEffect(() => {
     if (isProjectModalOpen) {
+      // Store the current scroll position
+      const scrollY = window.scrollY
+      
+      // Prevent scrolling
       document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = 'unset'
-    }
-
-    return () => {
-      document.body.style.overflow = 'unset'
+      document.body.style.position = 'fixed'
+      document.body.style.top = `-${scrollY}px`
+      document.body.style.width = '100%'
+      
+      // Prevent wheel events on the body
+      const preventScroll = (e: Event) => {
+        e.preventDefault()
+      }
+      
+      document.addEventListener('wheel', preventScroll, { passive: false })
+      document.addEventListener('touchmove', preventScroll, { passive: false })
+      
+      return () => {
+        // Restore scrolling
+        document.body.style.overflow = 'unset'
+        document.body.style.position = ''
+        document.body.style.top = ''
+        document.body.style.width = ''
+        
+        // Restore scroll position
+        window.scrollTo(0, scrollY)
+        
+        // Remove event listeners
+        document.removeEventListener('wheel', preventScroll)
+        document.removeEventListener('touchmove', preventScroll)
+      }
     }
   }, [isProjectModalOpen])
 
