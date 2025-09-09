@@ -206,9 +206,10 @@ export default function ProjectDetailModal({ project, isOpen, onClose }: Project
                 </a>
                 <a
                   href="mailto:nageswarao1830@gmail.com?subject=Interested in the project: ${project.title}"
-                  className="px-6 py-3 border border-[var(--border)] text-[var(--muted)] hover:text-white hover:border-white transition-all duration-300 font-mono text-sm uppercase tracking-wider text-center"
+                  className="px-6 py-3 border border-purple-500 text-purple-400 hover:text-white hover:border-purple-400 transition-all duration-300 font-mono text-sm uppercase tracking-wider text-center relative overflow-hidden group"
                 >
-                  Discuss Project
+                  <span className="relative z-10">Discuss Project</span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-purple-600 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300" />
                 </a>
               </div>
             </div>

@@ -133,45 +133,57 @@ export default function HomePage() {
       savedScrollPosition.current = window.scrollY
       console.log('Modal opened, saved scroll position:', savedScrollPosition.current)
       
-      // Prevent scrolling
-      document.body.style.overflow = 'hidden'
+      // Completely lock the body in place
+      const scrollY = window.scrollY
       document.body.style.position = 'fixed'
-      document.body.style.top = `-${savedScrollPosition.current}px`
+      document.body.style.top = `-${scrollY}px`
+      document.body.style.left = '0'
+      document.body.style.right = '0'
+      document.body.style.overflow = 'hidden'
       document.body.style.width = '100%'
+      document.body.style.height = '100%'
       
-      // Prevent wheel events on the body
+      // Prevent all scroll events
       const preventScroll = (e: Event) => {
         e.preventDefault()
+        e.stopPropagation()
+        return false
       }
       
-      document.addEventListener('wheel', preventScroll, { passive: false })
-      document.addEventListener('touchmove', preventScroll, { passive: false })
+      // Add multiple event listeners to prevent all types of scrolling
+      document.addEventListener('wheel', preventScroll, { passive: false, capture: true })
+      document.addEventListener('touchmove', preventScroll, { passive: false, capture: true })
+      document.addEventListener('scroll', preventScroll, { passive: false, capture: true })
+      document.addEventListener('keydown', (e) => {
+        if ([32, 33, 34, 35, 36, 37, 38, 39, 40].includes(e.keyCode)) {
+          e.preventDefault()
+        }
+      }, { passive: false })
       
       return () => {
         console.log('Modal closing, restoring scroll position:', savedScrollPosition.current)
         
-        // Restore scrolling
-        document.body.style.overflow = 'unset'
+        // Remove all event listeners first
+        document.removeEventListener('wheel', preventScroll, { capture: true })
+        document.removeEventListener('touchmove', preventScroll, { capture: true })
+        document.removeEventListener('scroll', preventScroll, { capture: true })
+        document.removeEventListener('keydown', preventScroll, { capture: true })
+        
+        // Restore body styles
         document.body.style.position = ''
         document.body.style.top = ''
+        document.body.style.left = ''
+        document.body.style.right = ''
+        document.body.style.overflow = ''
         document.body.style.width = ''
+        document.body.style.height = ''
         
-        // Remove event listeners first
-        document.removeEventListener('wheel', preventScroll)
-        document.removeEventListener('touchmove', preventScroll)
-        
-        // Restore scroll position immediately without delay
+        // Restore scroll position immediately
         console.log('Restoring scroll to:', savedScrollPosition.current)
-        
-        // Force immediate scroll restoration
         window.scrollTo(0, savedScrollPosition.current)
         
-        // Also use Lenis if available for smooth restoration
-        if (lenisRef.current) {
-          setTimeout(() => {
-            lenisRef.current?.scrollTo(savedScrollPosition.current, { duration: 0.1 })
-          }, 10)
-        }
+        // Force a reflow to ensure the scroll position is set
+        document.body.offsetHeight
       }
     }
   }, [isProjectModalOpen])
