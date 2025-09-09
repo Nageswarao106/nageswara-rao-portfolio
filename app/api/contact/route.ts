@@ -1,5 +1,6 @@
 
 import { NextRequest, NextResponse } from 'next/server'
+import { sendContactEmail, type ContactFormData } from '@/lib/email'
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,21 +16,32 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // For now, just log the contact form data
-    // In production, this would save to a database or send an email
-    console.log('Contact form submission:', {
+    // Prepare contact form data
+    const contactData: ContactFormData = {
       name: name.trim(),
       email: email.trim(),
       subject: subject.trim(),
       message: message.trim(),
       timestamp: timestamp || new Date().toISOString(),
       form_type: form_type || 'contact'
-    })
+    }
+
+    // Log the submission
+    console.log('Contact form submission:', contactData)
+
+    // Send email notification
+    const emailResult = await sendContactEmail(contactData)
+    
+    if (!emailResult.success) {
+      console.error('Failed to send email:', emailResult.error)
+      // Still return success to user, but log the error
+    }
 
     return NextResponse.json(
       { 
         message: 'Contact form submitted successfully',
-        id: `contact_${Date.now()}`
+        id: `contact_${Date.now()}`,
+        emailSent: emailResult.success
       },
       { status: 200 }
     )
