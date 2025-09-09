@@ -77,6 +77,9 @@ export default function HomePage() {
 
   // Handle scroll-based section detection
   useEffect(() => {
+    // Don't run section detection when modal is open
+    if (isProjectModalOpen) return
+
     const handleScroll = () => {
       const sections = ['home', 'about', 'skills', 'experience', 'projects', 'contact']
       const scrollPosition = window.scrollY + 100
@@ -97,7 +100,7 @@ export default function HomePage() {
 
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [activeSection])
+  }, [activeSection, isProjectModalOpen])
 
   // Initialize Lenis smooth scrolling
   useEffect(() => {
@@ -157,16 +160,18 @@ export default function HomePage() {
         document.removeEventListener('wheel', preventScroll)
         document.removeEventListener('touchmove', preventScroll)
         
-        // Restore scroll position with a slight delay to ensure DOM is ready
-        setTimeout(() => {
-          console.log('Restoring scroll to:', savedScrollPosition.current)
-          // Use Lenis if available, otherwise use regular scrollTo
-          if (lenisRef.current) {
-            lenisRef.current.scrollTo(savedScrollPosition.current, { duration: 0.1 })
-          } else {
-            window.scrollTo(0, savedScrollPosition.current)
-          }
-        }, 100)
+        // Restore scroll position immediately without delay
+        console.log('Restoring scroll to:', savedScrollPosition.current)
+        
+        // Force immediate scroll restoration
+        window.scrollTo(0, savedScrollPosition.current)
+        
+        // Also use Lenis if available for smooth restoration
+        if (lenisRef.current) {
+          setTimeout(() => {
+            lenisRef.current?.scrollTo(savedScrollPosition.current, { duration: 0.1 })
+          }, 10)
+        }
       }
     }
   }, [isProjectModalOpen])
