@@ -2,6 +2,7 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
+import { useEffect, useRef } from 'react'
 import { type Project } from '@/lib/projects-data'
 import { X } from 'lucide-react'
 
@@ -12,6 +13,34 @@ interface ProjectDetailModalProps {
 }
 
 export default function ProjectDetailModal({ project, isOpen, onClose }: ProjectDetailModalProps) {
+  const modalRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (isOpen && modalRef.current) {
+      // Focus the modal for keyboard navigation
+      modalRef.current.focus()
+      
+      // Handle mouse wheel events
+      const handleWheel = (e: WheelEvent) => {
+        const modal = modalRef.current
+        if (modal) {
+          const scrollableContent = modal.querySelector('.overflow-y-auto') as HTMLElement
+          if (scrollableContent) {
+            e.preventDefault()
+            scrollableContent.scrollTop += e.deltaY
+          }
+        }
+      }
+
+      // Add wheel event listener
+      document.addEventListener('wheel', handleWheel, { passive: false })
+      
+      return () => {
+        document.removeEventListener('wheel', handleWheel)
+      }
+    }
+  }, [isOpen])
+
   if (!project) return null
 
   return (
@@ -34,11 +63,13 @@ export default function ProjectDetailModal({ project, isOpen, onClose }: Project
 
           {/* Modal Content */}
           <motion.div
+            ref={modalRef}
             initial={{ opacity: 0, scale: 0.9, y: 50 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 50 }}
             transition={{ type: 'spring', damping: 20 }}
-            className="relative w-full max-w-4xl max-h-[90vh] overflow-hidden glass-strong rounded-lg"
+            className="relative w-full max-w-4xl max-h-[90vh] overflow-hidden glass-strong rounded-lg focus:outline-none"
+            tabIndex={-1}
           >
             {/* Close Button */}
             <button
@@ -49,7 +80,7 @@ export default function ProjectDetailModal({ project, isOpen, onClose }: Project
             </button>
 
             {/* Content */}
-            <div className="p-8 max-h-[90vh] overflow-y-auto">
+            <div className="p-8 max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-thumb-[var(--accent)] scrollbar-track-transparent hover:scrollbar-thumb-[var(--accent-bright)] overflow-x-hidden">
               {/* Header */}
               <div className="mb-8">
                 <div className="flex items-center justify-between mb-4">
