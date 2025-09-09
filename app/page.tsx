@@ -280,27 +280,28 @@ export default function HomePage() {
             <div className="flex items-center space-x-6">
               <a
                 href="mailto:nageswarao1830@gmail.com"
-                className="px-4 py-2 border border-[var(--accent-bright)] text-[var(--accent-bright)] hover:text-black hover:border-[var(--accent-bright)] transition-all duration-300 font-mono text-sm uppercase tracking-wider relative overflow-hidden group"
+                className="px-4 py-2 border border-red-500 text-red-400 hover:text-white hover:border-red-400 transition-all duration-300 font-mono text-sm uppercase tracking-wider relative overflow-hidden group"
               >
                 <span className="relative z-10">Email</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-[var(--accent-bright)] to-[var(--accent)] transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-red-600 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300" />
               </a>
               <a
                 href="https://www.linkedin.com/in/innamuri-nageswara-rao"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-4 py-2 border border-[var(--accent)] text-[var(--accent)] hover:text-black hover:border-[var(--accent-bright)] transition-all duration-300 font-mono text-sm uppercase tracking-wider relative overflow-hidden group"
+                className="px-4 py-2 border border-blue-500 text-blue-400 hover:text-white hover:border-blue-400 transition-all duration-300 font-mono text-sm uppercase tracking-wider relative overflow-hidden group"
               >
                 <span className="relative z-10">LinkedIn</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-[var(--accent)] to-[var(--accent-bright)] transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-600 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300" />
               </a>
               <a
                 href="https://github.com/Nageswarao106"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[var(--muted)] hover:text-[var(--accent-bright)] transition-colors duration-300 text-sm font-mono uppercase tracking-wider"
+                className="px-4 py-2 border border-green-500 text-green-400 hover:text-white hover:border-green-400 transition-all duration-300 font-mono text-sm uppercase tracking-wider relative overflow-hidden group"
               >
-                GitHub
+                <span className="relative z-10">GitHub</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-green-600 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300" />
               </a>
             </div>
           </div>
