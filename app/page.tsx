@@ -133,7 +133,7 @@ export default function HomePage() {
       savedScrollPosition.current = window.scrollY
       console.log('Modal opened, saved scroll position:', savedScrollPosition.current)
       
-      // Completely lock the body in place
+      // Lock the body in place
       const scrollY = window.scrollY
       document.body.style.position = 'fixed'
       document.body.style.top = `-${scrollY}px`
@@ -141,33 +141,55 @@ export default function HomePage() {
       document.body.style.right = '0'
       document.body.style.overflow = 'hidden'
       document.body.style.width = '100%'
-      document.body.style.height = '100%'
       
-      // Prevent all scroll events
-      const preventScroll = (e: Event) => {
+      // Only prevent scroll events on the body, not on modal content
+      const preventBodyScroll = (e: Event) => {
+        // Only prevent if the event is not coming from within the modal
+        const target = e.target as Element
+        const modal = document.querySelector('[data-modal="project-detail"]')
+        
+        if (modal && modal.contains(target)) {
+          // Allow scrolling within the modal
+          return
+        }
+        
+        // Prevent scrolling on the body
         e.preventDefault()
         e.stopPropagation()
         return false
       }
       
-      // Add multiple event listeners to prevent all types of scrolling
-      document.addEventListener('wheel', preventScroll, { passive: false, capture: true })
-      document.addEventListener('touchmove', preventScroll, { passive: false, capture: true })
-      document.addEventListener('scroll', preventScroll, { passive: false, capture: true })
-      document.addEventListener('keydown', (e) => {
+      // Add event listeners to prevent body scrolling only
+      document.addEventListener('wheel', preventBodyScroll, { passive: false })
+      document.addEventListener('touchmove', preventBodyScroll, { passive: false })
+      document.addEventListener('scroll', preventBodyScroll, { passive: false })
+      
+      // Prevent keyboard scrolling on body only
+      const preventKeyboardScroll = (e: KeyboardEvent) => {
+        const target = e.target as Element
+        const modal = document.querySelector('[data-modal="project-detail"]')
+        
+        if (modal && modal.contains(target)) {
+          // Allow keyboard navigation within the modal
+          return
+        }
+        
+        // Prevent keyboard scrolling on body
         if ([32, 33, 34, 35, 36, 37, 38, 39, 40].includes(e.keyCode)) {
           e.preventDefault()
         }
-      }, { passive: false })
+      }
+      
+      document.addEventListener('keydown', preventKeyboardScroll, { passive: false })
       
       return () => {
         console.log('Modal closing, restoring scroll position:', savedScrollPosition.current)
         
-        // Remove all event listeners first
-        document.removeEventListener('wheel', preventScroll, { capture: true })
-        document.removeEventListener('touchmove', preventScroll, { capture: true })
-        document.removeEventListener('scroll', preventScroll, { capture: true })
-        document.removeEventListener('keydown', preventScroll, { capture: true })
+        // Remove event listeners
+        document.removeEventListener('wheel', preventBodyScroll)
+        document.removeEventListener('touchmove', preventBodyScroll)
+        document.removeEventListener('scroll', preventBodyScroll)
+        document.removeEventListener('keydown', preventKeyboardScroll)
         
         // Restore body styles
         document.body.style.position = ''
@@ -176,7 +198,6 @@ export default function HomePage() {
         document.body.style.right = ''
         document.body.style.overflow = ''
         document.body.style.width = ''
-        document.body.style.height = ''
         
         // Restore scroll position immediately
         console.log('Restoring scroll to:', savedScrollPosition.current)

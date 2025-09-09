@@ -67,6 +67,7 @@ export default function ProjectDetailModal({ project, isOpen, onClose }: Project
           {/* Modal Content */}
           <motion.div
             ref={modalRef}
+            data-modal="project-detail"
             initial={{ opacity: 0, scale: 0.9, y: 50 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 50 }}
