@@ -128,6 +128,7 @@ export default function HomePage() {
     if (isProjectModalOpen) {
       // Store the current scroll position
       savedScrollPosition.current = window.scrollY
+      console.log('Modal opened, saved scroll position:', savedScrollPosition.current)
       
       // Prevent scrolling
       document.body.style.overflow = 'hidden'
@@ -144,6 +145,8 @@ export default function HomePage() {
       document.addEventListener('touchmove', preventScroll, { passive: false })
       
       return () => {
+        console.log('Modal closing, restoring scroll position:', savedScrollPosition.current)
+        
         // Restore scrolling
         document.body.style.overflow = 'unset'
         document.body.style.position = ''
@@ -156,13 +159,14 @@ export default function HomePage() {
         
         // Restore scroll position with a slight delay to ensure DOM is ready
         setTimeout(() => {
+          console.log('Restoring scroll to:', savedScrollPosition.current)
           // Use Lenis if available, otherwise use regular scrollTo
           if (lenisRef.current) {
-            lenisRef.current.scrollTo(savedScrollPosition.current, { duration: 0.3 })
+            lenisRef.current.scrollTo(savedScrollPosition.current, { duration: 0.1 })
           } else {
             window.scrollTo(0, savedScrollPosition.current)
           }
-        }, 50)
+        }, 100)
       }
     }
   }, [isProjectModalOpen])
