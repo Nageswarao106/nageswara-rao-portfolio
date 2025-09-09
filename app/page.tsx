@@ -129,11 +129,11 @@ export default function HomePage() {
   // Prevent body scroll when modal is open
   useEffect(() => {
     if (isProjectModalOpen) {
-      // Store the current scroll position
+      // Store the current scroll position BEFORE any changes
       savedScrollPosition.current = window.scrollY
       console.log('Modal opened, saved scroll position:', savedScrollPosition.current)
       
-      // Lock the body in place
+      // Lock the body in place immediately
       const scrollY = window.scrollY
       document.body.style.position = 'fixed'
       document.body.style.top = `-${scrollY}px`
@@ -141,15 +141,16 @@ export default function HomePage() {
       document.body.style.right = '0'
       document.body.style.overflow = 'hidden'
       document.body.style.width = '100%'
+      document.body.style.height = '100%'
       
-      // Only prevent scroll events on the body, not on modal content
+      // Prevent scroll events on the body only
       const preventBodyScroll = (e: Event) => {
-        // Only prevent if the event is not coming from within the modal
+        // Check if the event is coming from within the modal
         const target = e.target as Element
         const modal = document.querySelector('[data-modal="project-detail"]')
         
         if (modal && modal.contains(target)) {
-          // Allow scrolling within the modal
+          // Allow scrolling within the modal - don't prevent the event
           return
         }
         
@@ -159,7 +160,7 @@ export default function HomePage() {
         return false
       }
       
-      // Add event listeners to prevent body scrolling only
+      // Add event listeners to prevent body scrolling
       document.addEventListener('wheel', preventBodyScroll, { passive: false })
       document.addEventListener('touchmove', preventBodyScroll, { passive: false })
       document.addEventListener('scroll', preventBodyScroll, { passive: false })
@@ -198,13 +199,27 @@ export default function HomePage() {
         document.body.style.right = ''
         document.body.style.overflow = ''
         document.body.style.width = ''
+        document.body.style.height = ''
         
         // Restore scroll position immediately
         console.log('Restoring scroll to:', savedScrollPosition.current)
         window.scrollTo(0, savedScrollPosition.current)
         
+        // Also restore with Lenis if available
+        if (lenisRef.current) {
+          lenisRef.current.scrollTo(savedScrollPosition.current, { immediate: true })
+        }
+        
         // Force a reflow to ensure the scroll position is set
         document.body.offsetHeight
+        
+        // Use a small timeout to ensure scroll position is properly restored
+        setTimeout(() => {
+          window.scrollTo(0, savedScrollPosition.current)
+          if (lenisRef.current) {
+            lenisRef.current.scrollTo(savedScrollPosition.current, { immediate: true })
+          }
+        }, 10)
       }
     }
   }, [isProjectModalOpen])
