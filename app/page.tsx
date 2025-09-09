@@ -104,8 +104,7 @@ export default function HomePage() {
     const lenis = new Lenis({
       duration: 1.0,
       easing: (t: number) => 1 - Math.pow(1 - t, 3),
-      smoothWheel: true,
-      smoothTouch: false
+      smoothWheel: true
     })
     lenisRef.current = lenis
 
@@ -181,14 +180,14 @@ export default function HomePage() {
           
           {/* Subtle grid pattern */}
           <motion.div 
-            style={{ y: layerGridY }}
-            className="absolute inset-0 opacity-5"
-            style={{
+            style={{ 
+              y: layerGridY,
               backgroundImage: `radial-gradient(circle at 25% 25%, #49c5b6 1px, transparent 1px),
                                radial-gradient(circle at 75% 75%, #2779a7 1px, transparent 1px)`,
               backgroundSize: '50px 50px',
               backgroundPosition: '0 0, 25px 25px'
             }}
+            className="absolute inset-0 opacity-5"
           />
           
           {/* Floating particles effect */}
