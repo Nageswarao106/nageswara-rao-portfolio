@@ -6,7 +6,7 @@ A modern, responsive portfolio website built with Next.js, TypeScript, and Tailw
 
 Visit the live website at: [https://nageswara-rao-portfolio.vercel.app](https://nageswara-rao-portfolio.vercel.app) (Deployed with Vercel)
 
-**Status**: ✅ Live and Ready!
+**Status**: ✅ Live and Ready! (Updated with modal scrolling fix)
 
 ## ✨ Features
 
