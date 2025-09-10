@@ -14,39 +14,16 @@ interface ProjectDetailModalProps {
 
 export default function ProjectDetailModal({ project, isOpen, onClose }: ProjectDetailModalProps) {
   const modalRef = useRef<HTMLDivElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (isOpen && modalRef.current) {
       // Focus the modal for keyboard navigation
       modalRef.current.focus()
       
-      // Handle mouse wheel events within the modal
-      const handleWheel = (e: WheelEvent) => {
-        const modal = modalRef.current
-        if (modal && modal.contains(e.target as Node)) {
-          const scrollableContent = modal.querySelector('.overflow-y-auto') as HTMLElement
-          if (scrollableContent) {
-            // Check if we're at the top or bottom of the scrollable content
-            const { scrollTop, scrollHeight, clientHeight } = scrollableContent
-            const isAtTop = scrollTop === 0
-            const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1
-            
-            // If scrolling up and at top, or scrolling down and at bottom, prevent default
-            if ((e.deltaY < 0 && isAtTop) || (e.deltaY > 0 && isAtBottom)) {
-              e.preventDefault()
-            }
-            // Otherwise, let the scroll happen naturally
-          }
-        }
-      }
-
-      // Add wheel event listener to the modal with capture to ensure it's handled
-      modalRef.current.addEventListener('wheel', handleWheel, { passive: false })
-      
-      return () => {
-        if (modalRef.current) {
-          modalRef.current.removeEventListener('wheel', handleWheel)
-        }
+      // Also focus the content area to ensure scrolling works
+      if (contentRef.current) {
+        contentRef.current.focus()
       }
     }
   }, [isOpen])
@@ -91,7 +68,15 @@ export default function ProjectDetailModal({ project, isOpen, onClose }: Project
             </button>
 
             {/* Content */}
-            <div className="p-8 max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-thumb-[var(--accent)] scrollbar-track-transparent hover:scrollbar-thumb-[var(--accent-bright)] overflow-x-hidden overscroll-contain">
+            <div 
+              ref={contentRef}
+              className="p-8 max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-thumb-[var(--accent)] scrollbar-track-transparent hover:scrollbar-thumb-[var(--accent-bright)] overflow-x-hidden overscroll-contain"
+              style={{ 
+                overscrollBehavior: 'contain',
+                WebkitOverflowScrolling: 'touch'
+              }}
+              tabIndex={-1}
+            >
               {/* Header */}
               <div className="mb-8">
                 <div className="flex items-center justify-between mb-4">
