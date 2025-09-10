@@ -154,6 +154,15 @@ export default function HomePage() {
           return
         }
         
+        // For wheel events, check if we're inside the modal content area
+        if (e.type === 'wheel') {
+          const scrollableContent = modal?.querySelector('.overflow-y-auto') as HTMLElement
+          if (scrollableContent && scrollableContent.contains(target)) {
+            // Allow wheel events within the modal content
+            return
+          }
+        }
+        
         // Prevent scrolling on the body
         e.preventDefault()
         e.stopPropagation()

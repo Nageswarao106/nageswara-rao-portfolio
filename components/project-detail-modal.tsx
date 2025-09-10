@@ -24,6 +24,20 @@ export default function ProjectDetailModal({ project, isOpen, onClose }: Project
       // Also focus the content area to ensure scrolling works
       if (contentRef.current) {
         contentRef.current.focus()
+        
+        // Add direct wheel event listener to ensure scrolling works
+        const handleWheel = (e: WheelEvent) => {
+          // Allow the wheel event to work naturally for scrolling
+          e.stopPropagation()
+        }
+        
+        contentRef.current.addEventListener('wheel', handleWheel, { passive: true })
+        
+        return () => {
+          if (contentRef.current) {
+            contentRef.current.removeEventListener('wheel', handleWheel)
+          }
+        }
       }
     }
   }, [isOpen])
@@ -56,13 +70,13 @@ export default function ProjectDetailModal({ project, isOpen, onClose }: Project
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 50 }}
             transition={{ type: 'spring', damping: 20 }}
-            className="relative w-full max-w-4xl max-h-[90vh] overflow-hidden glass-strong rounded-lg focus:outline-none"
+            className="relative w-full max-w-4xl max-h-[90vh] mx-4 sm:mx-0 overflow-hidden glass-strong rounded-lg focus:outline-none"
             tabIndex={-1}
           >
             {/* Close Button */}
             <button
               onClick={onClose}
-              className="absolute top-6 right-6 z-10 w-10 h-10 flex items-center justify-center glass rounded-full hover:glass-strong transition-all duration-300 group"
+              className="absolute top-4 right-4 sm:top-6 sm:right-6 z-10 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center glass rounded-full hover:glass-strong transition-all duration-300 group"
             >
               <X size={20} className="text-[var(--muted)] group-hover:text-white transition-colors duration-300" />
             </button>
@@ -70,7 +84,7 @@ export default function ProjectDetailModal({ project, isOpen, onClose }: Project
             {/* Content */}
             <div 
               ref={contentRef}
-              className="p-8 max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-thumb-[var(--accent)] scrollbar-track-transparent hover:scrollbar-thumb-[var(--accent-bright)] overflow-x-hidden overscroll-contain"
+              className="p-4 sm:p-8 max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-thumb-[var(--accent)] scrollbar-track-transparent hover:scrollbar-thumb-[var(--accent-bright)] overflow-x-hidden overscroll-contain"
               style={{ 
                 overscrollBehavior: 'contain',
                 WebkitOverflowScrolling: 'touch'
