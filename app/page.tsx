@@ -154,10 +154,25 @@ export default function HomePage() {
           return
         }
         
+        // For wheel events, check if we're trying to scroll within modal content
+        if (e.type === 'wheel') {
+          const wheelEvent = e as WheelEvent
+          const scrollableContent = modal?.querySelector('.overflow-y-auto') as HTMLElement
+          if (scrollableContent) {
+            const { scrollTop, scrollHeight, clientHeight } = scrollableContent
+            const isAtTop = scrollTop === 0
+            const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1
+            
+            // If we can still scroll within the modal, allow it
+            if ((wheelEvent.deltaY < 0 && !isAtTop) || (wheelEvent.deltaY > 0 && !isAtBottom)) {
+              return
+            }
+          }
+        }
+        
         // Prevent scrolling on the body
         e.preventDefault()
         e.stopPropagation()
-        return false
       }
       
       // Add event listeners to prevent body scrolling

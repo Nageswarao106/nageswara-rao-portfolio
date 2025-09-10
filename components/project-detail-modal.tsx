@@ -26,15 +26,22 @@ export default function ProjectDetailModal({ project, isOpen, onClose }: Project
         if (modal && modal.contains(e.target as Node)) {
           const scrollableContent = modal.querySelector('.overflow-y-auto') as HTMLElement
           if (scrollableContent) {
-            // Allow the scroll to happen naturally within the modal
-            // Don't prevent the event, just let it scroll
-            return
+            // Check if we're at the top or bottom of the scrollable content
+            const { scrollTop, scrollHeight, clientHeight } = scrollableContent
+            const isAtTop = scrollTop === 0
+            const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1
+            
+            // If scrolling up and at top, or scrolling down and at bottom, prevent default
+            if ((e.deltaY < 0 && isAtTop) || (e.deltaY > 0 && isAtBottom)) {
+              e.preventDefault()
+            }
+            // Otherwise, let the scroll happen naturally
           }
         }
       }
 
-      // Add wheel event listener to the modal
-      modalRef.current.addEventListener('wheel', handleWheel, { passive: true })
+      // Add wheel event listener to the modal with capture to ensure it's handled
+      modalRef.current.addEventListener('wheel', handleWheel, { passive: false })
       
       return () => {
         if (modalRef.current) {
@@ -84,7 +91,7 @@ export default function ProjectDetailModal({ project, isOpen, onClose }: Project
             </button>
 
             {/* Content */}
-            <div className="p-8 max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-thumb-[var(--accent)] scrollbar-track-transparent hover:scrollbar-thumb-[var(--accent-bright)] overflow-x-hidden">
+            <div className="p-8 max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-thumb-[var(--accent)] scrollbar-track-transparent hover:scrollbar-thumb-[var(--accent-bright)] overflow-x-hidden overscroll-contain">
               {/* Header */}
               <div className="mb-8">
                 <div className="flex items-center justify-between mb-4">
